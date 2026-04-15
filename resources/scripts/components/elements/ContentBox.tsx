@@ -1,6 +1,8 @@
 import React from 'react';
 import FlashMessageRender from '@/components/FlashMessageRender';
 import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
+import styled, { css } from 'styled-components/macro';
+import tw from 'twin.macro';
 
 type Props = Readonly<
     React.DetailedHTMLProps<React.HTMLAttributes<HTMLDivElement>, HTMLDivElement> & {
@@ -11,28 +13,38 @@ type Props = Readonly<
     }
 >;
 
+const BoxTitle = styled.h2`
+    color: hsl(220, 16%, 67%);
+    margin-bottom: 1rem;
+    padding-left: 0.25rem;
+    font-size: 1.5rem;
+`;
+
+const BoxInner = styled.div<{ $borderColor?: string }>`
+    background: hsl(226, 28%, 17%);
+    border: 1px solid hsl(228, 25%, 24%);
+    border-radius: 0.75rem;
+    padding: 1.25rem;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+    position: relative;
+
+    ${({ $borderColor }) =>
+        $borderColor &&
+        css`
+            border-top: 4px solid ${$borderColor};
+        `};
+`;
+
 const ContentBox = ({ title, borderColor, showFlashes, showLoadingOverlay, children, ...props }: Props) => (
     <div {...props}>
-        {title && (
-            <h2 style={{ color: 'hsl(220, 16%, 67%)', marginBottom: '1rem', paddingLeft: '0.25rem', fontSize: '1.5rem' }}>
-                {title}
-            </h2>
-        )}
+        {title && <BoxTitle>{title}</BoxTitle>}
         {showFlashes && (
-            <FlashMessageRender byKey={typeof showFlashes === 'string' ? showFlashes : undefined} style={{ marginBottom: '1rem' }} />
+            <FlashMessageRender byKey={typeof showFlashes === 'string' ? showFlashes : undefined} css={tw`mb-4`} />
         )}
-        <div style={{
-            background: 'hsl(226, 28%, 17%)',
-            border: `1px solid hsl(228, 25%, 24%)`,
-            borderTop: borderColor ? `4px solid ${borderColor}` : undefined,
-            borderRadius: '0.75rem',
-            padding: '1.25rem',
-            boxShadow: '0 2px 12px rgba(0, 0, 0, 0.3)',
-            position: 'relative',
-        }}>
+        <BoxInner $borderColor={borderColor}>
             <SpinnerOverlay visible={showLoadingOverlay || false} />
             {children}
-        </div>
+        </BoxInner>
     </div>
 );
 

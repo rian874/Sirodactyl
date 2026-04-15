@@ -1,12 +1,12 @@
 import React, { memo, useEffect, useRef, useState } from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEthernet, faHdd, faMemory, faMicrochip, faServer } from '@fortawesome/free-solid-svg-icons';
+import isEqual from 'react-fast-compare';
 import { Link } from 'react-router-dom';
 import { Server } from '@/api/server/getServer';
 import getServerResourceUsage, { ServerPowerState, ServerStats } from '@/api/server/getServerResourceUsage';
 import { bytesToString, ip, mbToBytes } from '@/lib/formatters';
 import Spinner from '@/components/elements/Spinner';
-import isEqual from 'react-fast-compare';
 import styled from 'styled-components/macro';
 
 // Determines if the current value is in an alarm threshold so we can show it in red rather
@@ -88,6 +88,111 @@ const ResourceBar = styled.div<{ $percent: number; $alarm: boolean }>`
 
 type Timer = ReturnType<typeof setInterval>;
 
+const ServerHeader = styled.div`
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 1rem;
+    align-items: start;
+`;
+
+const ServerInfo = styled.div`
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    min-width: 0;
+`;
+
+const ServerIcon = styled.div`
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.625rem;
+    background: hsl(228, 30%, 13%);
+    border: 1px solid hsl(228, 25%, 22%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+`;
+
+const ServerName = styled.p`
+    font-size: 1rem;
+    font-weight: 600;
+    color: hsl(220, 20%, 95%);
+    margin-bottom: 0.125rem;
+    line-height: 1.3;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+`;
+
+const ServerDescription = styled.p`
+    font-size: 0.75rem;
+    color: hsl(220, 13%, 54%);
+    line-height: 1.4;
+    margin-bottom: 0;
+`;
+
+const ServerAddress = styled.div`
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+    margin-top: 0.375rem;
+`;
+
+const StatusBadge = styled.div<{ $bg: string; $border: string }>`
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.3rem 0.7rem;
+    border-radius: 999px;
+    background: ${({ $bg }) => $bg};
+    border: 1px solid ${({ $border }) => $border};
+    white-space: nowrap;
+`;
+
+const StatusDot = styled.span<{ $color: string }>`
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: ${({ $color }) => $color};
+    box-shadow: 0 0 6px ${({ $color }) => $color};
+    flex-shrink: 0;
+`;
+
+const StatusLabel = styled.span<{ $color: string }>`
+    font-size: 0.7rem;
+    font-weight: 600;
+    color: ${({ $color }) => $color};
+    letter-spacing: 0.03em;
+`;
+
+const ResourceGrid = styled.div`
+    margin-top: 1.25rem;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.875rem;
+`;
+
+const ResourceLabel = styled.span`
+    font-size: 0.65rem;
+    color: hsl(220, 13%, 50%);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+`;
+
+const ResourceValue = styled.span<{ $alarm: boolean }>`
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: ${({ $alarm }) => ($alarm ? '#ef4444' : 'hsl(220, 20%, 85%)')};
+`;
+
+const ResourceLimit = styled.p`
+    font-size: 0.6rem;
+    color: hsl(220, 13%, 42%);
+    margin-top: 0.2rem;
+    margin-bottom: 0;
+`;
+
 const ServerRow = memo(({ server, className }: { server: Server; className?: string }) => {
     const interval = useRef<Timer>(null) as React.MutableRefObject<Timer>;
     const [isSuspended, setIsSuspended] = useState(server.status === 'suspended');
@@ -144,34 +249,19 @@ const ServerRow = memo(({ server, className }: { server: Server; className?: str
 
     return (
         <CardWrapper to={`/server/${server.id}`} className={className} $status={stats?.status}>
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr auto', gap: '1rem', alignItems: 'start' }}>
-                {/* Server info */}
-                <div style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem', minWidth: 0 }}>
-                    <div style={{
-                        width: '2.75rem',
-                        height: '2.75rem',
-                        borderRadius: '0.625rem',
-                        background: 'hsl(228, 30%, 13%)',
-                        border: '1px solid hsl(228, 25%, 22%)',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        flexShrink: 0,
-                    }}>
+            <ServerHeader>
+                <ServerInfo>
+                    <ServerIcon>
                         <FontAwesomeIcon icon={faServer} style={{ color: 'hsl(240, 60%, 65%)', fontSize: '1.1rem' }} />
-                    </div>
+                    </ServerIcon>
                     <div style={{ minWidth: 0, flex: 1 }}>
-                        <p style={{ fontSize: '1rem', fontWeight: 600, color: 'hsl(220, 20%, 95%)', marginBottom: '0.125rem', lineHeight: 1.3 }}
-                            className={'truncate'}>
-                            {server.name}
-                        </p>
+                        <ServerName>{server.name}</ServerName>
                         {!!server.description && (
-                            <p style={{ fontSize: '0.75rem', color: 'hsl(220, 13%, 54%)', lineHeight: 1.4, marginBottom: 0 }}
-                                className={'line-clamp-1'}>
+                            <ServerDescription className={'line-clamp-1'}>
                                 {server.description}
-                            </p>
+                            </ServerDescription>
                         )}
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem', marginTop: '0.375rem' }}>
+                        <ServerAddress>
                             <FontAwesomeIcon icon={faEthernet} style={{ color: 'hsl(220, 13%, 45%)', fontSize: '0.7rem' }} />
                             <span style={{ fontSize: '0.7rem', color: 'hsl(220, 13%, 50%)', fontFamily: 'monospace' }}>
                                 {server.allocations
@@ -182,37 +272,17 @@ const ServerRow = memo(({ server, className }: { server: Server; className?: str
                                         </React.Fragment>
                                     ))}
                             </span>
-                        </div>
+                        </ServerAddress>
                     </div>
-                </div>
+                </ServerInfo>
 
-                {/* Status badge */}
-                <div style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.4rem',
-                    padding: '0.3rem 0.7rem',
-                    borderRadius: '999px',
-                    background: statusColors.bg,
-                    border: `1px solid ${statusColors.dot}30`,
-                    whiteSpace: 'nowrap',
-                }}>
-                    <span style={{
-                        width: '6px',
-                        height: '6px',
-                        borderRadius: '50%',
-                        background: statusColors.dot,
-                        boxShadow: `0 0 6px ${statusColors.dot}`,
-                        flexShrink: 0,
-                    }} />
-                    <span style={{ fontSize: '0.7rem', fontWeight: 600, color: statusColors.dot, letterSpacing: '0.03em' }}>
-                        {statusLabel}
-                    </span>
-                </div>
-            </div>
+                <StatusBadge $bg={statusColors.bg} $border={`${statusColors.dot}30`}>
+                    <StatusDot $color={statusColors.dot} />
+                    <StatusLabel $color={statusColors.dot}>{statusLabel}</StatusLabel>
+                </StatusBadge>
+            </ServerHeader>
 
-            {/* Resource usage section */}
-            <div style={{ marginTop: '1.25rem', display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '0.875rem' }}>
+            <ResourceGrid>
                 {!stats || isSuspended ? (
                     isSuspended ? null : (
                         <div style={{ gridColumn: '1 / -1', display: 'flex', justifyContent: 'center' }}>
@@ -226,46 +296,40 @@ const ServerRow = memo(({ server, className }: { server: Server; className?: str
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                                     <FontAwesomeIcon icon={faMicrochip} style={{ fontSize: '0.65rem', color: alarms.cpu ? '#ef4444' : 'hsl(220, 13%, 50%)' }} />
-                                    <span style={{ fontSize: '0.65rem', color: 'hsl(220, 13%, 50%)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>CPU</span>
+                                    <ResourceLabel>CPU</ResourceLabel>
                                 </div>
-                                <span style={{ fontSize: '0.75rem', fontWeight: 600, color: alarms.cpu ? '#ef4444' : 'hsl(220, 20%, 85%)' }}>
-                                    {stats.cpuUsagePercent.toFixed(1)}%
-                                </span>
+                                <ResourceValue $alarm={alarms.cpu}>{stats.cpuUsagePercent.toFixed(1)}%</ResourceValue>
                             </div>
                             <ResourceBar $percent={cpuPercent} $alarm={alarms.cpu} />
-                            <p style={{ fontSize: '0.6rem', color: 'hsl(220, 13%, 42%)', marginTop: '0.2rem', marginBottom: 0 }}>of {cpuLimit}</p>
+                            <ResourceLimit>of {cpuLimit}</ResourceLimit>
                         </div>
                         {/* Memory */}
                         <div>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                                     <FontAwesomeIcon icon={faMemory} style={{ fontSize: '0.65rem', color: alarms.memory ? '#ef4444' : 'hsl(220, 13%, 50%)' }} />
-                                    <span style={{ fontSize: '0.65rem', color: 'hsl(220, 13%, 50%)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>RAM</span>
+                                    <ResourceLabel>RAM</ResourceLabel>
                                 </div>
-                                <span style={{ fontSize: '0.75rem', fontWeight: 600, color: alarms.memory ? '#ef4444' : 'hsl(220, 20%, 85%)' }}>
-                                    {bytesToString(stats.memoryUsageInBytes)}
-                                </span>
+                                <ResourceValue $alarm={alarms.memory}>{bytesToString(stats.memoryUsageInBytes)}</ResourceValue>
                             </div>
                             <ResourceBar $percent={memPercent} $alarm={alarms.memory} />
-                            <p style={{ fontSize: '0.6rem', color: 'hsl(220, 13%, 42%)', marginTop: '0.2rem', marginBottom: 0 }}>of {memoryLimit}</p>
+                            <ResourceLimit>of {memoryLimit}</ResourceLimit>
                         </div>
                         {/* Disk */}
                         <div>
                             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'baseline' }}>
                                 <div style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
                                     <FontAwesomeIcon icon={faHdd} style={{ fontSize: '0.65rem', color: alarms.disk ? '#ef4444' : 'hsl(220, 13%, 50%)' }} />
-                                    <span style={{ fontSize: '0.65rem', color: 'hsl(220, 13%, 50%)', textTransform: 'uppercase', letterSpacing: '0.06em' }}>Disk</span>
+                                    <ResourceLabel>Disk</ResourceLabel>
                                 </div>
-                                <span style={{ fontSize: '0.75rem', fontWeight: 600, color: alarms.disk ? '#ef4444' : 'hsl(220, 20%, 85%)' }}>
-                                    {bytesToString(stats.diskUsageInBytes)}
-                                </span>
+                                <ResourceValue $alarm={alarms.disk}>{bytesToString(stats.diskUsageInBytes)}</ResourceValue>
                             </div>
                             <ResourceBar $percent={diskPercent} $alarm={alarms.disk} />
-                            <p style={{ fontSize: '0.6rem', color: 'hsl(220, 13%, 42%)', marginTop: '0.2rem', marginBottom: 0 }}>of {diskLimit}</p>
+                            <ResourceLimit>of {diskLimit}</ResourceLimit>
                         </div>
                     </>
                 )}
-            </div>
+            </ResourceGrid>
         </CardWrapper>
     );
 }, isEqual);

@@ -1,7 +1,7 @@
 import React, { forwardRef } from 'react';
 import { Form } from 'formik';
-import { breakpoint } from '@/theme';
 import FlashMessageRender from '@/components/FlashMessageRender';
+import { breakpoint } from '@/theme';
 import styled from 'styled-components/macro';
 import tw from 'twin.macro';
 
