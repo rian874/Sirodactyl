@@ -1,9 +1,10 @@
 #!/bin/ash -e
 cd /app
 
-mkdir -p /var/log/panel/logs/ /var/log/supervisord/ /var/log/nginx/ /var/log/php7/ \
-  && chmod 777 /var/log/panel/logs/ \
-  && ln -s /app/storage/logs/ /var/log/panel/
+mkdir -p /var/log/panel/ /var/log/supervisord/ /var/log/nginx/ /var/log/php7/ \
+  && chmod 777 /app/storage/logs/ \
+  && rm -rf /var/log/panel/logs \
+  && ln -s /app/storage/logs /var/log/panel/logs
 
 ## check for .env file and generate app keys if missing
 if [ -f /app/var/.env ]; then
@@ -71,7 +72,16 @@ done
 
 ## make sure the db is set up
 echo -e "Migrating and Seeding D.B"
-php artisan migrate --seed --force
+MIGRATE_RETRIES=0
+until php artisan migrate --seed --force; do
+  MIGRATE_RETRIES=$((MIGRATE_RETRIES + 1))
+  if [ "$MIGRATE_RETRIES" -ge 5 ]; then
+    echo "Migration failed after $MIGRATE_RETRIES attempts. Check database logs."
+    exit 1
+  fi
+  echo "Migration failed, retrying in 5 seconds... (attempt $MIGRATE_RETRIES/5)"
+  sleep 5
+done
 
 ## start cronjobs for the queue
 echo -e "Starting cron jobs."
