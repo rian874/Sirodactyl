@@ -13,21 +13,56 @@ import SpinnerOverlay from '@/components/elements/SpinnerOverlay';
 import Tooltip from '@/components/elements/tooltip/Tooltip';
 import Avatar from '@/components/Avatar';
 
+const NavWrapper = styled.div`
+    background: hsl(228, 35%, 9%);
+    border-bottom: 1px solid hsl(228, 30%, 17%);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.4), 0 1px 0 rgba(255, 255, 255, 0.03) inset;
+`;
+
+const LogoText = styled.span`
+    background: linear-gradient(135deg, ${theme`colors.indigo.400`.toString()} 0%, ${theme`colors.violet.400`.toString()} 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+`;
+
 const RightNavigation = styled.div`
     & > a,
     & > button,
     & > .navigation-link {
-        ${tw`flex items-center h-full no-underline text-neutral-300 px-6 cursor-pointer transition-all duration-150`};
+        ${tw`flex items-center h-full no-underline text-neutral-400 px-4 cursor-pointer transition-all duration-200`};
+        position: relative;
 
-        &:active,
-        &:hover {
-            ${tw`text-neutral-100 bg-black`};
+        &::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 0;
+            height: 2px;
+            background: linear-gradient(90deg, ${theme`colors.indigo.500`.toString()}, ${theme`colors.violet.500`.toString()});
+            border-radius: 2px 2px 0 0;
+            transition: width 200ms ease;
         }
 
-        &:active,
-        &:hover,
+        &:hover {
+            ${tw`text-neutral-100`};
+            background: rgba(255, 255, 255, 0.04);
+
+            &::after {
+                width: 60%;
+            }
+        }
+
         &.active {
-            box-shadow: inset 0 -2px ${theme`colors.cyan.600`.toString()};
+            ${tw`text-white`};
+
+            &::after {
+                width: 60%;
+            }
         }
     }
 `;
@@ -46,17 +81,15 @@ export default () => {
     };
 
     return (
-        <div className={'w-full bg-neutral-900 shadow-md overflow-x-auto'}>
+        <NavWrapper className={'w-full overflow-x-auto'}>
             <SpinnerOverlay visible={isLoggingOut} />
             <div className={'mx-auto w-full flex items-center h-[3.5rem] max-w-[1200px]'}>
                 <div id={'logo'} className={'flex-1'}>
                     <Link
                         to={'/'}
-                        className={
-                            'text-2xl font-header font-medium px-4 no-underline text-neutral-200 hover:text-neutral-100 transition-colors duration-150'
-                        }
+                        className={'text-2xl font-header px-4 no-underline transition-opacity duration-150 hover:opacity-80'}
                     >
-                        {name}
+                        <LogoText>{name}</LogoText>
                     </Link>
                 </div>
                 <RightNavigation className={'flex h-full items-center justify-center'}>
@@ -87,6 +120,6 @@ export default () => {
                     </Tooltip>
                 </RightNavigation>
             </div>
-        </div>
+        </NavWrapper>
     );
 };

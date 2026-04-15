@@ -14,7 +14,11 @@ export default createGlobalStyle`
     }
 
     body {
-        ${tw`font-sans bg-neutral-800 text-neutral-200`};
+        ${tw`font-sans text-neutral-200`};
+        background: hsl(228, 35%, 9%);
+        background-image: radial-gradient(ellipse at 20% 50%, hsl(240, 40%, 14%) 0%, transparent 60%),
+                          radial-gradient(ellipse at 80% 10%, hsl(220, 40%, 13%) 0%, transparent 50%);
+        background-attachment: fixed;
         letter-spacing: 0.015em;
     }
 
@@ -56,7 +60,7 @@ export default createGlobalStyle`
         border-right-width: 4px;
         border-left-width: 4px;
         -webkit-border-radius: 9px 4px;
-        -webkit-box-shadow: inset 0 0 0 1px hsl(211, 10%, 53%), inset 0 0 0 4px hsl(209deg 18% 30%);
+        -webkit-box-shadow: inset 0 0 0 1px hsl(220, 13%, 36%), inset 0 0 0 4px hsl(224, 22%, 22%);
     }
 
     ::-webkit-scrollbar-track-piece {

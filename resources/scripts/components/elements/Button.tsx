@@ -11,7 +11,7 @@ interface Props {
 }
 
 const ButtonStyle = styled.button<Omit<Props, 'isLoading'>>`
-    ${tw`relative inline-block rounded p-2 uppercase tracking-wide text-sm transition-all duration-150 border`};
+    ${tw`relative inline-block rounded-lg p-2 uppercase tracking-wide text-sm transition-all duration-150 border shadow-sm`};
 
     ${(props) =>
         ((!props.isSecondary && !props.color) || props.color === 'primary') &&
