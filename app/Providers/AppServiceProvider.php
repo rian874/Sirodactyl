@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\View;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Database\Connection;
+use Pterodactyl\Database\MySqlConnection;
+use Pterodactyl\Database\MariaDbConnection;
 use Pterodactyl\Extensions\Themes\Theme;
 use Illuminate\Database\Eloquent\Relations\Relation;
 
@@ -56,6 +59,17 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        // Register custom MySQL and MariaDB connection classes that add --skip-ssl to
+        // the mysql CLI command when no SSL CA is configured. This prevents migration
+        // failures when the database server does not have SSL/TLS enabled.
+        Connection::resolverFor('mysql', function ($connection, $database, $prefix, $config) {
+            return new MySqlConnection($connection, $database, $prefix, $config);
+        });
+
+        Connection::resolverFor('mariadb', function ($connection, $database, $prefix, $config) {
+            return new MariaDbConnection($connection, $database, $prefix, $config);
+        });
+
         // Only load the settings service provider if the environment
         // is configured to allow it.
         if (!config('pterodactyl.load_environment_only', false) && $this->app->environment() !== 'testing') {

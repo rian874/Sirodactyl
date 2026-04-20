@@ -22,6 +22,7 @@ export default () => {
     const { clearFlashes, clearAndAddHttpError } = useFlash();
     const uuid = useStoreState((state) => state.user.data!.uuid);
     const rootAdmin = useStoreState((state) => state.user.data!.rootAdmin);
+    const username = useStoreState((state) => state.user.data!.username);
     const [showOnlyAdmin, setShowOnlyAdmin] = usePersistedState(`${uuid}:show_all_servers`, false);
 
     const { data: servers, error } = useSWR<PaginatedResult<Server>>(
@@ -50,8 +51,25 @@ export default () => {
 
     return (
         <PageContentBlock title={'Dashboard'} showFlashKey={'dashboard'}>
+            <div css={tw`mb-6`}>
+                <h1 style={{
+                    fontSize: '1.75rem',
+                    fontWeight: 700,
+                    letterSpacing: '-0.025em',
+                    background: 'linear-gradient(135deg, hsl(220, 20%, 95%), hsl(240, 40%, 75%))',
+                    WebkitBackgroundClip: 'text',
+                    WebkitTextFillColor: 'transparent',
+                    backgroundClip: 'text',
+                    marginBottom: '0.25rem',
+                }}>
+                    Welcome back, {username}
+                </h1>
+                <p css={tw`text-sm text-neutral-400`}>
+                    {servers ? `${servers.pagination.total} server${servers.pagination.total !== 1 ? 's' : ''} in your account` : 'Loading servers…'}
+                </p>
+            </div>
             {rootAdmin && (
-                <div css={tw`mb-2 flex justify-end items-center`}>
+                <div css={tw`mb-4 flex justify-end items-center`}>
                     <p css={tw`uppercase text-xs text-neutral-400 mr-2`}>
                         {showOnlyAdmin ? "Showing others' servers" : 'Showing your servers'}
                     </p>
@@ -68,15 +86,25 @@ export default () => {
                 <Pagination data={servers} onPageSelect={setPage}>
                     {({ items }) =>
                         items.length > 0 ? (
-                            items.map((server, index) => (
-                                <ServerRow key={server.uuid} server={server} css={index > 0 ? tw`mt-2` : undefined} />
-                            ))
+                            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 420px), 1fr))', gap: '1rem' }}>
+                                {items.map((server) => (
+                                    <ServerRow key={server.uuid} server={server} />
+                                ))}
+                            </div>
                         ) : (
-                            <p css={tw`text-center text-sm text-neutral-400`}>
-                                {showOnlyAdmin
-                                    ? 'There are no other servers to display.'
-                                    : 'There are no servers associated with your account.'}
-                            </p>
+                            <div style={{
+                                textAlign: 'center',
+                                padding: '3rem',
+                                background: 'hsl(226, 28%, 17%)',
+                                border: '1px solid hsl(228, 25%, 24%)',
+                                borderRadius: '0.875rem',
+                            }}>
+                                <p css={tw`text-sm text-neutral-400`}>
+                                    {showOnlyAdmin
+                                        ? 'There are no other servers to display.'
+                                        : 'There are no servers associated with your account.'}
+                                </p>
+                            </div>
                         )
                     }
                 </Pagination>

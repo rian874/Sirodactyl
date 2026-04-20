@@ -129,9 +129,14 @@ const Modal: React.FC<ModalProps> = ({
                             </div>
                         </Fade>
                     )}
-                    <div
-                        css={tw`bg-neutral-800 p-3 sm:p-4 md:p-6 rounded shadow-md overflow-y-scroll transition-all duration-150`}
-                    >
+    <div
+        css={tw`p-4 sm:p-5 md:p-7 rounded-xl overflow-y-scroll transition-all duration-150`}
+        style={{
+            background: 'hsl(226, 28%, 17%)',
+            border: '1px solid hsl(228, 25%, 24%)',
+            boxShadow: '0 20px 60px rgba(0,0,0,0.6)',
+        }}
+    >
                         {children}
                     </div>
                 </ModalContainer>

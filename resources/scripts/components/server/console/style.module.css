@@ -1,19 +1,29 @@
 .stat_block {
-    @apply flex items-center rounded shadow-lg relative;
+    @apply flex items-center rounded-xl shadow-lg relative;
     @apply col-span-3 md:col-span-2 lg:col-span-6;
     @apply px-3 py-2 md:p-3 lg:p-4;
+    background: hsl(226, 28%, 17%);
+    border: 1px solid hsl(228, 25%, 24%);
+    transition: all 200ms ease;
+
+    &:hover {
+        border-color: hsl(228, 30%, 30%);
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+    }
 
     & > .status_bar {
         @apply w-1 h-full absolute left-0 top-0 rounded-l sm:hidden;
+        border-radius: 0.75rem 0 0 0.75rem;
     }
 
     & > .icon {
-        @apply hidden flex-shrink-0 items-center justify-center rounded-lg shadow-md w-12 h-12;
+        @apply hidden flex-shrink-0 items-center justify-center rounded-xl shadow-md w-12 h-12;
         @apply transition-colors duration-500;
         @apply sm:flex sm:mr-4;
+        border: 1px solid hsl(228, 25%, 22%);
 
         & > svg {
-            @apply w-6 h-6 m-auto;
+            @apply w-5 h-5 m-auto;
         }
     }
 }
@@ -31,7 +41,10 @@
     }
 
     & > .container {
-        @apply rounded-t p-1 sm:p-2 bg-black min-h-[16rem] flex-1 font-mono text-sm;
+        @apply rounded-t-xl p-1 sm:p-2 min-h-[16rem] flex-1 font-mono text-sm;
+        background: hsl(228, 35%, 8%);
+        border: 1px solid hsl(228, 25%, 18%);
+        border-bottom: none;
 
         & #terminal {
             @apply h-full;
@@ -41,7 +54,7 @@
             }
 
             &::-webkit-scrollbar-thumb {
-                @apply bg-gray-900;
+                background: hsl(228, 25%, 20%);
             }
         }
     }
@@ -51,13 +64,18 @@
     }
 
     & .command_input {
-        @apply relative bg-gray-900 px-2 text-gray-100 pl-10 pr-4 py-2 w-full font-mono text-sm sm:rounded-b;
+        @apply relative px-2 text-gray-100 pl-10 pr-4 py-2 w-full font-mono text-sm sm:rounded-b-xl;
         @apply focus:ring-0 outline-none focus-visible:outline-none;
         @apply border-0 border-b-2 border-transparent transition-colors duration-100;
-        @apply active:border-cyan-500 focus:border-cyan-500;
+        @apply active:border-indigo-500 focus:border-indigo-500;
+        background: hsl(228, 30%, 11%);
+        border-top: 1px solid hsl(228, 25%, 20%);
     }
 }
 
 .chart_container {
-    @apply bg-gray-600 rounded shadow-lg pt-2 border-b-4 border-gray-700 relative;
+    @apply rounded-xl shadow-lg pt-2 relative;
+    background: hsl(226, 28%, 17%);
+    border: 1px solid hsl(228, 25%, 24%);
+    border-bottom: 3px solid hsl(228, 25%, 20%);
 }

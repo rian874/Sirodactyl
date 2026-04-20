@@ -1,8 +1,8 @@
 import React, { forwardRef } from 'react';
 import { Form } from 'formik';
-import styled from 'styled-components/macro';
-import { breakpoint } from '@/theme';
 import FlashMessageRender from '@/components/FlashMessageRender';
+import { breakpoint } from '@/theme';
+import styled from 'styled-components/macro';
 import tw from 'twin.macro';
 
 type Props = React.DetailedHTMLProps<React.FormHTMLAttributes<HTMLFormElement>, HTMLFormElement> & {
@@ -24,29 +24,66 @@ const Container = styled.div`
 
     ${breakpoint('xl')`
         ${tw`w-full`}
-        max-width: 700px;
+        max-width: 480px;
     `};
+`;
+
+const FormCard = styled.div`
+    background: hsl(226, 28%, 17%);
+    border: 1px solid hsl(228, 25%, 24%);
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(99, 102, 241, 0.08);
+    position: relative;
+    overflow: hidden;
+
+    &::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, hsl(240, 80%, 60%), hsl(270, 80%, 60%), hsl(240, 80%, 60%));
+        background-size: 200% 100%;
+    }
 `;
 
 export default forwardRef<HTMLFormElement, Props>(({ title, ...props }, ref) => (
     <Container>
-        {title && <h2 css={tw`text-3xl text-center text-neutral-100 font-medium py-4`}>{title}</h2>}
-        <FlashMessageRender css={tw`mb-2 px-1`} />
-        <Form {...props} ref={ref}>
-            <div css={tw`md:flex w-full bg-white shadow-lg rounded-lg p-6 md:pl-0 mx-1`}>
-                <div css={tw`flex-none select-none mb-6 md:mb-0 self-center`}>
-                    <img src={'/assets/svgs/pterodactyl.svg'} css={tw`block w-48 md:w-64 mx-auto`} />
-                </div>
-                <div css={tw`flex-1`}>{props.children}</div>
-            </div>
-        </Form>
-        <p css={tw`text-center text-neutral-500 text-xs mt-4`}>
+        <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
+            <img
+                src={'/assets/svgs/pterodactyl.svg'}
+                style={{ width: '3rem', height: '3rem', margin: '0 auto 1rem' }}
+                alt={'Logo'}
+            />
+            {title && (
+                <h2 style={{
+                    fontSize: '1.5rem',
+                    fontWeight: 700,
+                    color: 'hsl(220, 20%, 95%)',
+                    letterSpacing: '-0.02em',
+                    margin: 0,
+                }}>
+                    {title}
+                </h2>
+            )}
+        </div>
+        <FlashMessageRender css={tw`mb-4`} />
+        <FormCard>
+            <Form {...props} ref={ref}>
+                {props.children}
+            </Form>
+        </FormCard>
+        <p style={{ textAlign: 'center', color: 'hsl(220, 13%, 40%)', fontSize: '0.75rem', marginTop: '1.25rem' }}>
             &copy; 2015 - {new Date().getFullYear()}&nbsp;
             <a
                 rel={'noopener nofollow noreferrer'}
                 href={'https://pterodactyl.io'}
                 target={'_blank'}
-                css={tw`no-underline text-neutral-500 hover:text-neutral-300`}
+                style={{ color: 'hsl(220, 13%, 40%)', textDecoration: 'none' }}
+                onMouseOver={(e) => (e.currentTarget.style.color = 'hsl(220, 20%, 70%)')}
+                onMouseOut={(e) => (e.currentTarget.style.color = 'hsl(220, 13%, 40%)')}
             >
                 Pterodactyl Software
             </a>

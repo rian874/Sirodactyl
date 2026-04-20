@@ -1,4 +1,3 @@
-version: '3.8'
 x-common:
   database:
     &db-environment
@@ -47,7 +46,7 @@ services:
     image: redis:alpine
     restart: always
   panel:
-    image: ghcr.io/pterodactyl/panel:latest
+    build: .
     restart: always
     ports:
       - "80:80"
