@@ -24,17 +24,24 @@ Stop settling for less. Make game servers a first class citizen on your platform
 
 ## Quick Install (Windows 11 + Docker)
 
-No Windows 11 PowerShell, dentro da pasta do projeto:
+In Windows 11 PowerShell, inside the project folder:
+> Security note: review the script content at the URL before executing it.
+> Replace `<RELEASE_TAG>` with a real release tag (for example: `v1.0.0`) before running commands.
 
 ```powershell
-powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/rian874/Sirodactyl/HEAD/scripts/install-win11.ps1 -UseBasicParsing | iex"
+iwr https://raw.githubusercontent.com/rian874/Sirodactyl/<RELEASE_TAG>/scripts/install-win11.ps1 -UseBasicParsing -OutFile .\install-win11.ps1
+powershell -ExecutionPolicy Bypass -File .\install-win11.ps1 -NoStart
 ```
 
-Via `curl` (CMD/PowerShell):
+> After running with `-NoStart`, review and adjust generated `docker-compose.yml` and `.env`, then run the script again without `-NoStart`.
 
-```bash
-curl -fsSL https://raw.githubusercontent.com/rian874/Sirodactyl/HEAD/scripts/install-win11.ps1 -o install-win11.ps1
-powershell -ExecutionPolicy Bypass -File .\install-win11.ps1 -AppUrl "http://localhost" -MysqlPassword "SENHA_DB" -MysqlRootPassword "SENHA_ROOT"
+Via `curl` (CMD/PowerShell):
+> Replace placeholder passwords below with strong real credentials.
+
+```powershell
+curl -fsSL https://raw.githubusercontent.com/rian874/Sirodactyl/<RELEASE_TAG>/scripts/install-win11.ps1 -o install-win11.ps1
+if (!(Test-Path .\install-win11.ps1)) { throw "Download failed: install-win11.ps1 not found." }
+powershell -ExecutionPolicy Bypass -File .\install-win11.ps1 -AppUrl "http://localhost" -MysqlPassword "CHANGE_ME_WITH_A_STRONG_DB_PASSWORD" -MysqlRootPassword "CHANGE_ME_WITH_A_STRONG_ROOT_PASSWORD"
 ```
 
 ## Sponsors
