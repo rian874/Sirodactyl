@@ -42,8 +42,28 @@ if (-not (Test-Path $envFile)) {
 $composeContent = Get-Content $composeFile -Raw
 
 if (-not $NoStart) {
+    if ([string]::IsNullOrWhiteSpace($MysqlPassword)) {
+        $secureMysqlPassword = Read-Host "Enter MYSQL_PASSWORD" -AsSecureString
+        $mysqlPasswordPtr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secureMysqlPassword)
+        try {
+            $MysqlPassword = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($mysqlPasswordPtr)
+        } finally {
+            [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($mysqlPasswordPtr)
+        }
+    }
+
+    if ([string]::IsNullOrWhiteSpace($MysqlRootPassword)) {
+        $secureMysqlRootPassword = Read-Host "Enter MYSQL_ROOT_PASSWORD" -AsSecureString
+        $mysqlRootPasswordPtr = [Runtime.InteropServices.Marshal]::SecureStringToBSTR($secureMysqlRootPassword)
+        try {
+            $MysqlRootPassword = [Runtime.InteropServices.Marshal]::PtrToStringBSTR($mysqlRootPasswordPtr)
+        } finally {
+            [Runtime.InteropServices.Marshal]::ZeroFreeBSTR($mysqlRootPasswordPtr)
+        }
+    }
+
     if ([string]::IsNullOrWhiteSpace($MysqlPassword) -or [string]::IsNullOrWhiteSpace($MysqlRootPassword)) {
-        throw "When running installation you must pass -MysqlPassword and -MysqlRootPassword."
+        throw "MYSQL_PASSWORD and MYSQL_ROOT_PASSWORD are required to continue."
     }
 }
 

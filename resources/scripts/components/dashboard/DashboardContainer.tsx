@@ -40,6 +40,8 @@ export default () => {
     const uuid = useStoreState((state) => state.user.data!.uuid);
     const rootAdmin = useStoreState((state) => state.user.data!.rootAdmin);
     const [showOnlyAdmin, setShowOnlyAdmin] = usePersistedState(`${uuid}:show_all_servers`, false);
+    const dashboardSubtitle =
+        'Track live server status, monitor resource usage, and access instances faster with a cleaner modern interface.';
 
     const { data: servers, error } = useSWR<PaginatedResult<Server>>(
         ['/api/client/servers', showOnlyAdmin && rootAdmin, page],
@@ -69,10 +71,7 @@ export default () => {
         <PageContentBlock title={'Dashboard'} showFlashKey={'dashboard'}>
             <DashboardHero>
                 <DashboardTitle>Server Dashboard</DashboardTitle>
-                <DashboardSubtitle>
-                    Track live server status, monitor resource usage, and access instances faster with a cleaner modern
-                    interface.
-                </DashboardSubtitle>
+                <DashboardSubtitle>{dashboardSubtitle}</DashboardSubtitle>
             </DashboardHero>
             {rootAdmin && (
                 <div css={tw`mb-2 flex justify-end items-center`}>

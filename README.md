@@ -25,24 +25,26 @@ Stop settling for less. Make game servers a first class citizen on your platform
 ## Quick Install (Windows 11 + Docker)
 
 In Windows 11 PowerShell, inside the project folder:
-> Security note: review the script content at the URL before executing it.
-> Replace `<RELEASE_TAG>` with a real release tag (for example: `v1.0.0`) before running commands.
+**⚠ Security note:** review the script content at the URL before executing it.
+**⚠ Required:** replace `<RELEASE_TAG>` with a real release tag (for example: `v1.0.0`) before running commands.
 
 ```powershell
 iwr https://raw.githubusercontent.com/rian874/Sirodactyl/<RELEASE_TAG>/scripts/install-win11.ps1 -UseBasicParsing -OutFile .\install-win11.ps1
 powershell -ExecutionPolicy Bypass -File .\install-win11.ps1 -NoStart
 ```
 
-> After running with `-NoStart`, review and adjust generated `docker-compose.yml` and `.env`, then run the script again without `-NoStart`.
+**Note:** after running with `-NoStart`, review and adjust generated `docker-compose.yml` and `.env`, then run the script again without `-NoStart`.
 
 Via `curl` (CMD/PowerShell):
-> Replace placeholder passwords below with strong real credentials.
+**⚠ Required:** replace placeholder passwords below with strong real credentials.
 
 ```powershell
 curl -fsSL https://raw.githubusercontent.com/rian874/Sirodactyl/<RELEASE_TAG>/scripts/install-win11.ps1 -o install-win11.ps1
 if (!(Test-Path .\install-win11.ps1)) { throw "Download failed: install-win11.ps1 not found." }
-powershell -ExecutionPolicy Bypass -File .\install-win11.ps1 -AppUrl "http://localhost" -MysqlPassword "CHANGE_ME_WITH_A_STRONG_DB_PASSWORD" -MysqlRootPassword "CHANGE_ME_WITH_A_STRONG_ROOT_PASSWORD"
+powershell -ExecutionPolicy Bypass -File .\install-win11.ps1 -AppUrl "http://localhost"
 ```
+
+The script will securely prompt for `MYSQL_PASSWORD` and `MYSQL_ROOT_PASSWORD` during installation.
 
 ## Sponsors
 
