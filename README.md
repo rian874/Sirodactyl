@@ -22,6 +22,21 @@ Stop settling for less. Make game servers a first class citizen on your platform
 * [Community Guides](https://pterodactyl.io/community/about.html)
 * Or, get additional help [via Discord](https://discord.gg/pterodactyl)
 
+## Quick Install (Windows 11 + Docker)
+
+No Windows 11 PowerShell, dentro da pasta do projeto:
+
+```powershell
+powershell -ExecutionPolicy Bypass -Command "iwr https://raw.githubusercontent.com/rian874/Sirodactyl/HEAD/scripts/install-win11.ps1 -UseBasicParsing | iex"
+```
+
+Via `curl` (CMD/PowerShell):
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/rian874/Sirodactyl/HEAD/scripts/install-win11.ps1 -o install-win11.ps1
+powershell -ExecutionPolicy Bypass -File .\install-win11.ps1 -AppUrl "http://localhost" -MysqlPassword "SENHA_DB" -MysqlRootPassword "SENHA_ROOT"
+```
+
 ## Sponsors
 
 I would like to extend my sincere thanks to the following sponsors for helping fund Pterodactyl's development.
