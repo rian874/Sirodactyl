@@ -13,6 +13,23 @@ import useSWR from 'swr';
 import { PaginatedResult } from '@/api/http';
 import Pagination from '@/components/elements/Pagination';
 import { useLocation } from 'react-router-dom';
+import styled from 'styled-components/macro';
+
+const DashboardHero = styled.div`
+    ${tw`mb-6 rounded-2xl border border-neutral-700/80 bg-neutral-900/65 backdrop-blur-sm p-5 shadow-lg`};
+`;
+
+const DashboardTitle = styled.h1`
+    ${tw`text-2xl sm:text-3xl text-neutral-100 font-semibold`};
+`;
+
+const DashboardSubtitle = styled.p`
+    ${tw`mt-2 text-sm sm:text-base text-neutral-300`};
+`;
+
+const DashboardSection = styled.div`
+    ${tw`rounded-2xl border border-neutral-700/80 bg-neutral-900/50 p-3 sm:p-4 shadow-lg`};
+`;
 
 export default () => {
     const { search } = useLocation();
@@ -50,6 +67,13 @@ export default () => {
 
     return (
         <PageContentBlock title={'Dashboard'} showFlashKey={'dashboard'}>
+            <DashboardHero>
+                <DashboardTitle>Server Dashboard</DashboardTitle>
+                <DashboardSubtitle>
+                    Track live server status, monitor resource usage, and access instances faster with a cleaner modern
+                    interface.
+                </DashboardSubtitle>
+            </DashboardHero>
             {rootAdmin && (
                 <div css={tw`mb-2 flex justify-end items-center`}>
                     <p css={tw`uppercase text-xs text-neutral-400 mr-2`}>
@@ -65,21 +89,23 @@ export default () => {
             {!servers ? (
                 <Spinner centered size={'large'} />
             ) : (
-                <Pagination data={servers} onPageSelect={setPage}>
-                    {({ items }) =>
-                        items.length > 0 ? (
-                            items.map((server, index) => (
-                                <ServerRow key={server.uuid} server={server} css={index > 0 ? tw`mt-2` : undefined} />
-                            ))
-                        ) : (
-                            <p css={tw`text-center text-sm text-neutral-400`}>
-                                {showOnlyAdmin
-                                    ? 'There are no other servers to display.'
-                                    : 'There are no servers associated with your account.'}
-                            </p>
-                        )
-                    }
-                </Pagination>
+                <DashboardSection>
+                    <Pagination data={servers} onPageSelect={setPage}>
+                        {({ items }) =>
+                            items.length > 0 ? (
+                                items.map((server, index) => (
+                                    <ServerRow key={server.uuid} server={server} css={index > 0 ? tw`mt-2` : undefined} />
+                                ))
+                            ) : (
+                                <p css={tw`text-center text-sm text-neutral-400 py-10`}>
+                                    {showOnlyAdmin
+                                        ? 'There are no other servers to display.'
+                                        : 'There are no servers associated with your account.'}
+                                </p>
+                            )
+                        }
+                    </Pagination>
+                </DashboardSection>
             )}
         </PageContentBlock>
     );
