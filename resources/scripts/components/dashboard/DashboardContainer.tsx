@@ -16,7 +16,7 @@ import { useLocation } from 'react-router-dom';
 import styled from 'styled-components/macro';
 
 const DashboardHero = styled.div`
-    ${tw`mb-6 rounded-2xl border border-neutral-700/80 bg-neutral-900/65 backdrop-blur-sm p-5 shadow-lg`};
+    ${tw`mb-6 rounded-2xl border border-neutral-700/80 bg-neutral-900/60 backdrop-blur-sm p-5 shadow-lg`};
 `;
 
 const DashboardTitle = styled.h1`
@@ -94,7 +94,11 @@ export default () => {
                         {({ items }) =>
                             items.length > 0 ? (
                                 items.map((server, index) => (
-                                    <ServerRow key={server.uuid} server={server} css={index > 0 ? tw`mt-2` : undefined} />
+                                    <ServerRow
+                                        key={server.uuid}
+                                        server={server}
+                                        css={index > 0 ? tw`mt-2` : undefined}
+                                    />
                                 ))
                             ) : (
                                 <p css={tw`text-center text-sm text-neutral-400 py-10`}>
